@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
+import { Form, TextArea } from 'semantic-ui-react';
+import DeleteButton from './DeleteButton.jsx';
 
 const style = {
   border: '1px dashed gray',
@@ -48,7 +50,6 @@ const cardTarget = {
 };
 
 function collect(connect, monitor) {
-  console.log( "HERE2", connect );
   return {
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
@@ -65,15 +66,17 @@ function collect2(connect, monitor) {
 }
 
 class Card extends React.Component {
-
   render() {
 
-    const { text, isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { text, id, isDragging, connectDragSource, connectDropTarget, editMode, deleteCard } = this.props;
     const opacity = isDragging ? 0 : 1;
 
     return connectDragSource(connectDropTarget(
-      <div >
-        {text}
+      <div>
+        <Form>
+          <DeleteButton deleteCard={deleteCard} id={id}/>
+          <TextArea autoHeight placeholder={text} text={text} id={id} style={{ minHeight: 100 }} onClick={editMode} />
+        </Form>
       </div>
     ));
   }
@@ -86,7 +89,9 @@ Card.propTypes = {
   id: PropTypes.any.isRequired,
   text: PropTypes.string.isRequired,
   moveCard: PropTypes.func.isRequired,
-  findCard: PropTypes.func.isRequired
+  findCard: PropTypes.func.isRequired,
+  editMode: PropTypes.func.isRequired,
+  deleteCard: PropTypes.func.isRequired
 };
 
 const x = DropTarget(ItemTypes.CARD, cardTarget, collect )(Card)

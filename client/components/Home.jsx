@@ -7,6 +7,17 @@ import List from './List.jsx'
 const wellStyles = {maxWidth: 400, margin: '0 auto 10px'};
 
 const serverPath = 'http://cfassignment.herokuapp.com/matthewnicolaou/tasks'
+const closePath ='https://app.close.io/hackwithus/'
+
+const closeApp = {
+  first_name: 'Matthew',
+  last_name: 'Nicolaou',
+  email: 'matthewpnicolaou@gmail.com',
+  phone: '925-876-3379',
+  cover_letter: 'http://bit.ly/2yFTvMj',
+  urls: ['http://bit.ly/2yL8DHf', 'https://github.com/nickelow', 'https://musetrap-trektracker.herokuapp.com/']
+}
+
 
 class Home extends React.Component {
 	constructor(props){
@@ -15,6 +26,7 @@ class Home extends React.Component {
       tasks: []
     }
     this.getTasks = this.getTasks.bind(this);
+    this.sendResume = this.sendResume.bind(this);
   }
 
   getTasks(){
@@ -27,11 +39,20 @@ class Home extends React.Component {
     })
   }
 
+  sendResume(){
+    axios.post(closePath, closeApp)
+    .then(function(response){
+      console.log(response)
+    })
+    .catch(function(err){
+      console.log(err)
+    })
+  }
+
   render(){
     return([
-    <div>Hello World</div>,
     <span><div className="well" style={wellStyles}>
-      <Button bsStyle="primary" bsSize="large" block onClick={this.getTasks}>Block level button</Button>
+      <div class="ui huge header">Task List</div>
     </div></span>
     , <span><List/></span>])
   }

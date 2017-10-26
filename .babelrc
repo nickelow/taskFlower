@@ -1,2 +1,2 @@
 { "presets": [ ["es2015", { "modules": false }], "react" ],
-  "plugins": ["transform-decorators"] }
+  "plugins": ["transform-decorators", "react-html-attrs"] }
