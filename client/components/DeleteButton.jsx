@@ -12,7 +12,7 @@ class DeleteButton extends React.Component {
 	}
 	render() {
 	  return(
-      <i class="fa fa-trash" aria-hidden="true" onClick= {this.props.deleteCard}  id= {this.props.id} style={styles}></i>
+      <i class="fa fa-trash" aria-hidden="true" text={this.props.text} onClick= {this.props.deleteCard}  id= {this.props.id} style={styles}></i>
 	  )
 	}
 }

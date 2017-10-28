@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Alert /> should render 1`] = `
+<div
+  className="ui message"
+>
+  <i
+    className="close icon"
+  />
+  <p>
+    The list was updated and saved.
+  </p>
+</div>
+`;
+
+exports[`<ButtonBar/> should render 1`] = `
+Array [
+  <div
+    style={
+      Object {
+        "diplay": "inline-block",
+        "verticalAlign": "middle",
+      }
+    }
+  />,
+]
+`;
+
+exports[`<Card /> should render 1`] = `undefined`;
+
+exports[`<DeleteButton/> should render 1`] = `
+<i
+  aria-hidden="true"
+  className="fa fa-trash"
+  onClick={[Function]}
+  style={
+    Object {
+      "left": "98%",
+      "position": "relative",
+      "top": "20px",
+    }
+  }
+/>
+`;
+
+exports[`<Home /> should render 1`] = `
+Array [
+  <span />,
+]
+`;
+
+exports[`<List /> should render 1`] = `<List />`;
+
+exports[`<SaveButton/> should render 1`] = `
+<button
+  className="ui active button"
+  onClick={[Function]}
+>
+  <i
+    className="checkmark icon"
+  />
+  Save
+</button>
+`;
+
+exports[`<TaskButton/> should render 1`] = `
+<button
+  className="ui right labeled icon button"
+  onClick={[Function]}
+>
+  <i
+    aria-hidden="true"
+    className="plus icon"
+    onClick={[Function]}
+  />
+  New Task
+</button>
+`;

@@ -48777,7 +48777,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var wellStyles = { maxWidth: 400, margin: '0 auto 10px' };
-
+var listStyles = { "font-family": "Helvetica, Arial, sans-serif", "font-size": "13px", "color": "rgb(51, 51, 51)" };
+var headerStyles = { 'position': 'relative', 'left': '10%', 'top': '20%', 'width': '40%' };
 var serverPath = 'http://cfassignment.herokuapp.com/matthewnicolaou/tasks';
 var closePath = 'https://app.close.io/hackwithus/';
 
@@ -48830,19 +48831,7 @@ var Home = function (_React$Component) {
       return [_react2.default.createElement(
         'span',
         null,
-        _react2.default.createElement(
-          'div',
-          { className: 'well', style: wellStyles },
-          _react2.default.createElement(
-            'div',
-            { className: 'ui huge header' },
-            'Task List'
-          )
-        )
-      ), _react2.default.createElement(
-        'span',
-        null,
-        _react2.default.createElement(_List2.default, null)
+        _react2.default.createElement(_List2.default, { style: listStyles })
       )];
     }
   }]);
@@ -61152,9 +61141,17 @@ var _TaskButton = __webpack_require__(979);
 
 var _TaskButton2 = _interopRequireDefault(_TaskButton);
 
+var _DeleteButton = __webpack_require__(966);
+
+var _DeleteButton2 = _interopRequireDefault(_DeleteButton);
+
 var _ButtonBar = __webpack_require__(980);
 
 var _ButtonBar2 = _interopRequireDefault(_ButtonBar);
+
+var _Alert = __webpack_require__(994);
+
+var _Alert2 = _interopRequireDefault(_Alert);
 
 var _axios = __webpack_require__(298);
 
@@ -61177,7 +61174,9 @@ var cardStyle = {
 var listStyle = {
   'marginRight': '5%',
   'marginLeft': '5%',
-  'marginTop': '0%'
+  'marginTop': '5%',
+  backgroundColor: '#f2f9fd',
+  'position': 'static'
 };
 
 var List = function (_React$Component) {
@@ -61191,41 +61190,28 @@ var List = function (_React$Component) {
     _this.moveCard = _this.moveCard.bind(_this);
     _this.findCard = _this.findCard.bind(_this);
     _this.editMode = _this.editMode.bind(_this);
+    _this.editCard = _this.editCard.bind(_this);
     _this.addCard = _this.addCard.bind(_this);
     _this.saveCards = _this.saveCards.bind(_this);
     _this.getCards = _this.getCards.bind(_this);
     _this.deleteCard = _this.deleteCard.bind(_this);
+    _this.dismissAlert = _this.dismissAlert.bind(_this);
     _this.state = {
-      cards: [{
-        id: 0,
-        text: 'Write a cool JS library'
-      }, {
-        id: 1,
-        text: 'Make it generic enough'
-      }, {
-        id: 2,
-        text: 'Write README'
-      }, {
-        id: 3,
-        text: 'Create some examples'
-      }, {
-        id: 4,
-        text: 'Spam in Twitter and IRC to promote it (note that this element is taller than the others)'
-      }, {
-        id: 5,
-        text: '???'
-      }, {
-        id: 6,
-        text: 'PROFIT'
-      }],
-
+      cards: [],
       modified: false,
-      target: null
+      saved: null,
+      target: null,
+      ids: 0
     };
     return _this;
   }
 
   _createClass(List, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.getCards();
+    }
+  }, {
     key: 'findCard',
     value: function findCard(id) {
       var cards = this.state.cards;
@@ -61251,57 +61237,92 @@ var List = function (_React$Component) {
           $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]]
         }
       }));
+      this.forceUpdate();
     }
   }, {
     key: 'saveCards',
     value: function saveCards() {
+      var context = this;
       var taskList = this.state.cards;
       _axios2.default.post(serverPath, { tasks: taskList }).then(function (response) {
         console.log('sent to server');
+        context.setState({
+          modified: false,
+          saved: true
+        });
       }).catch(function (error) {
         console.log('error', error);
+        this.setState({
+          saved: false
+        });
       });
     }
   }, {
     key: 'getCards',
     value: function getCards() {
+      var data = [];
+      var context = this;
       _axios2.default.get(serverPath).then(function (response) {
         console.log(response.data);
-        this.setState({
-          cards: response.data
+        data = response.data.tasks;
+        context.setState({
+          cards: data
         });
       }).catch(function (err) {
         console.log(err);
+        this.setState({
+          saved: false
+        });
       });
     }
   }, {
     key: 'addCard',
     value: function addCard() {
-      this.setState(this.state.cards.splice(0, 0, { id: this.state.cards.length + 1,
-        text: 'New Task',
-        key: this.state.cards.length + 1,
-        index: this.state.cards.length + 1 }));
+      this.setState(this.state.cards.splice(0, 0, { id: this.state.cards.length,
+        text: 'New Task' }));
       this.setState({
-        modified: true });
+        modified: true
+      });
     }
   }, {
     key: 'deleteCard',
     value: function deleteCard(index) {
       var cardId = index.target.id;
       var newList = this.state.cards.filter(function (card) {
-        return card.id.toString() !== cardId;
+        return card.text !== cardId;
       });
-      console.log(newList);
       this.setState({
-        cards: newList
+        cards: newList,
+        modified: true
       });
     }
   }, {
     key: 'editMode',
-    value: function editMode() {
+    value: function editMode(event) {
       console.log('Matt is a baller', event.target);
       this.setState({
         modified: true
+      });
+    }
+  }, {
+    key: 'editCard',
+    value: function editCard(e) {
+      console.log(e.target.value);
+      var cardId = e.target.id;
+      var cardList = this.state.cards;
+      console.log(cardId);
+      cardList[cardId] = { text: e.target.value, id: cardId };
+      console.log(cardList);
+      this.state.cards[cardId].text = e.target.value;
+      this.setState({
+        modified: true
+      });
+    }
+  }, {
+    key: 'dismissAlert',
+    value: function dismissAlert() {
+      this.setState({
+        saved: false
       });
     }
   }, {
@@ -61317,21 +61338,21 @@ var List = function (_React$Component) {
         _react2.default.createElement(
           'div',
           null,
-          _react2.default.createElement(_ButtonBar2.default, { addCard: this.addCard, saveCards: this.saveCards })
+          _react2.default.createElement(_ButtonBar2.default, { addCard: this.addCard, modified: this.state.modified, saveCards: this.saveCards })
         ),
-        ',',
         _react2.default.createElement(
           'div',
           { style: cardStyle },
-          this.state.cards.map(function (card, i) {
-            return _react2.default.createElement(_Task2.default, { key: card.id,
+          cards.map(function (card, i) {
+            return _react2.default.createElement(_Task2.default, { key: i,
               index: i,
-              id: card.id,
+              id: i,
               text: card.text,
               moveCard: _this2.moveCard,
               findCard: _this2.findCard,
               editMode: _this2.editMode,
-              deleteCard: _this2.deleteCard
+              deleteCard: _this2.deleteCard,
+              editCard: _this2.editCard
             });
           })
         )
@@ -61394,7 +61415,8 @@ var style = {
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
   backgroundColor: 'white',
-  cursor: 'move'
+  cursor: 'move',
+  'fontFamily': 'Helvetica, Arial, sans-serif'
 };
 
 var cardSource = {
@@ -61472,7 +61494,8 @@ var Card = function (_React$Component) {
           connectDragSource = _props.connectDragSource,
           connectDropTarget = _props.connectDropTarget,
           editMode = _props.editMode,
-          deleteCard = _props.deleteCard;
+          deleteCard = _props.deleteCard,
+          editCard = _props.editCard;
 
       var opacity = isDragging ? 0 : 1;
 
@@ -61482,8 +61505,8 @@ var Card = function (_React$Component) {
         _react2.default.createElement(
           _semanticUiReact.Form,
           null,
-          _react2.default.createElement(_DeleteButton2.default, { deleteCard: deleteCard, id: id }),
-          _react2.default.createElement(_semanticUiReact.TextArea, { autoHeight: true, placeholder: text, text: text, id: id, style: { minHeight: 100 }, onClick: editMode })
+          _react2.default.createElement(_DeleteButton2.default, { deleteCard: deleteCard, id: text, text: text }),
+          _react2.default.createElement(_semanticUiReact.TextArea, { autoHeight: true, placeholder: text, text: text, id: id, style: { minHeight: 100 }, onKeyUp: editCard })
         )
       )));
     }
@@ -61492,17 +61515,18 @@ var Card = function (_React$Component) {
   return Card;
 }(_react2.default.Component);
 
-Card.propTypes = {
-  connectDragSource: _propTypes2.default.func.isRequired,
-  connectDropTarget: _propTypes2.default.func.isRequired,
-  isDragging: _propTypes2.default.bool.isRequired,
-  id: _propTypes2.default.any.isRequired,
-  text: _propTypes2.default.string.isRequired,
-  moveCard: _propTypes2.default.func.isRequired,
-  findCard: _propTypes2.default.func.isRequired,
-  editMode: _propTypes2.default.func.isRequired,
-  deleteCard: _propTypes2.default.func.isRequired
-};
+// Card.propTypes = {
+//   connectDragSource: PropTypes.func.isRequired,
+//   connectDropTarget: PropTypes.func.isRequired,
+//   isDragging: PropTypes.bool.isRequired,
+//   id: PropTypes.any.isRequired,
+//   text: PropTypes.string.isRequired,
+//   moveCard: PropTypes.func.isRequired,
+//   findCard: PropTypes.func.isRequired,
+//   editMode: PropTypes.func.isRequired,
+//   deleteCard: PropTypes.func.isRequired,
+//   editCard: PropTypes.func.isRequired
+// };
 
 var x = (0, _reactDnd.DropTarget)(_ItemTypes2.default.CARD, cardTarget, collect)(Card);
 exports.default = (0, _reactDnd.DragSource)(_ItemTypes2.default.CARD, cardSource, collect2)(x);
@@ -83306,7 +83330,7 @@ var DeleteButton = function (_React$Component) {
 	_createClass(DeleteButton, [{
 		key: 'render',
 		value: function render() {
-			return _react2.default.createElement('i', { className: 'fa fa-trash', 'aria-hidden': 'true', onClick: this.props.deleteCard, id: this.props.id, style: styles });
+			return _react2.default.createElement('i', { className: 'fa fa-trash', 'aria-hidden': 'true', text: this.props.text, onClick: this.props.deleteCard, id: this.props.id, style: styles });
 		}
 	}]);
 
@@ -84919,7 +84943,7 @@ var TaskButton = function (_React$Component) {
       return _react2.default.createElement(
         "button",
         { className: "ui right labeled icon button", onClick: this.props.addCard },
-        _react2.default.createElement("i", { className: "fa fa-plus", "aria-hidden": "true" }),
+        _react2.default.createElement("i", { className: "plus icon", "aria-hidden": "true", onClick: this.props.addCard }),
         "New Task"
       );
     }
@@ -84955,6 +84979,14 @@ var _SaveButton = __webpack_require__(981);
 
 var _SaveButton2 = _interopRequireDefault(_SaveButton);
 
+var _DisabledSaveButton = __webpack_require__(982);
+
+var _DisabledSaveButton2 = _interopRequireDefault(_DisabledSaveButton);
+
+var _Alert = __webpack_require__(994);
+
+var _Alert2 = _interopRequireDefault(_Alert);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -84963,7 +84995,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var styles = { 'position': 'absolute', 'top': '25px', 'right': '17%', 'width': '400px', 'height': '100px', 'display': 'inline-block' };
+var styles = { 'position': 'relative', 'top': '20%', 'left': '60%', 'width': '400px', 'height': '100px', 'display': 'inline-block' };
+var headerStyles = { 'position': 'absolute', 'left': '5%', 'top': '8%', 'width': '40%' };
+var barStyles = { 'diplay': 'inline-block', 'verticalAlign': 'middle' };
 
 var ButtonBar = function (_React$Component) {
 	_inherits(ButtonBar, _React$Component);
@@ -84971,26 +85005,59 @@ var ButtonBar = function (_React$Component) {
 	function ButtonBar(props) {
 		_classCallCheck(this, ButtonBar);
 
-		return _possibleConstructorReturn(this, (ButtonBar.__proto__ || Object.getPrototypeOf(ButtonBar)).call(this, props));
+		var _this = _possibleConstructorReturn(this, (ButtonBar.__proto__ || Object.getPrototypeOf(ButtonBar)).call(this, props));
+
+		_this.state = {
+			modified: _this.props.modified
+		};
+		return _this;
 	}
 
 	_createClass(ButtonBar, [{
+		key: 'componentWillReceiveProps',
+		value: function componentWillReceiveProps() {
+			this.setState({
+				modified: this.props.modified
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			return _react2.default.createElement(
+			return [_react2.default.createElement(
 				'div',
-				{ className: 'ui buttons', style: styles },
+				{ style: barStyles },
+				'     ',
 				_react2.default.createElement(
 					'div',
-					{ className: 'buttons' },
-					_react2.default.createElement(_TaskButton2.default, { addCard: this.props.addCard })
+					{ className: 'ui header', style: headerStyles },
+					_react2.default.createElement('i', { className: 'fa fa-list-alt fa-4x' }),
+					_react2.default.createElement(
+						'div',
+						{ className: 'content', style: { 'padding': '0.5rem 1rem', 'top': '50%' } },
+						'Tasks',
+						_react2.default.createElement(
+							'div',
+							{ className: 'sub header' },
+							'Add and edit your tasks'
+						)
+					)
 				),
+				',',
 				_react2.default.createElement(
 					'div',
-					{ className: 'buttons' },
-					_react2.default.createElement(_SaveButton2.default, { saveCards: this.props.saveCards })
+					{ className: 'ui buttons', style: styles },
+					_react2.default.createElement(
+						'div',
+						{ className: 'buttons' },
+						_react2.default.createElement(_TaskButton2.default, { addCard: this.props.addCard })
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'buttons' },
+						this.props.modified === false ? _react2.default.createElement(_DisabledSaveButton2.default, null) : _react2.default.createElement(_SaveButton2.default, { saveCards: this.props.saveCards })
+					)
 				)
-			);
+			)];
 		}
 	}]);
 
@@ -85034,7 +85101,12 @@ var SaveButton = function (_React$Component) {
   function SaveButton(props) {
     _classCallCheck(this, SaveButton);
 
-    return _possibleConstructorReturn(this, (SaveButton.__proto__ || Object.getPrototypeOf(SaveButton)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (SaveButton.__proto__ || Object.getPrototypeOf(SaveButton)).call(this, props));
+
+    _this.state = {
+      modified: false
+    };
+    return _this;
   }
 
   _createClass(SaveButton, [{
@@ -85043,7 +85115,7 @@ var SaveButton = function (_React$Component) {
       return _react2.default.createElement(
         'button',
         { className: 'ui active button', onClick: this.props.saveCards },
-        _react2.default.createElement('i', { className: 'user icon' }),
+        _react2.default.createElement('i', { className: 'checkmark icon' }),
         'Save'
       );
     }
@@ -85053,6 +85125,132 @@ var SaveButton = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = SaveButton;
+
+/***/ }),
+/* 982 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(18);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DisabledSaveButton = function (_React$Component) {
+  _inherits(DisabledSaveButton, _React$Component);
+
+  function DisabledSaveButton(props) {
+    _classCallCheck(this, DisabledSaveButton);
+
+    var _this = _possibleConstructorReturn(this, (DisabledSaveButton.__proto__ || Object.getPrototypeOf(DisabledSaveButton)).call(this, props));
+
+    _this.state = {
+      modified: false
+    };
+    return _this;
+  }
+
+  _createClass(DisabledSaveButton, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'button',
+        { className: 'ui disabled button' },
+        _react2.default.createElement('i', { className: 'checkmark icon' }),
+        'Save'
+      );
+    }
+  }]);
+
+  return DisabledSaveButton;
+}(_react2.default.Component);
+
+exports.default = DisabledSaveButton;
+
+/***/ }),
+/* 983 */,
+/* 984 */,
+/* 985 */,
+/* 986 */,
+/* 987 */,
+/* 988 */,
+/* 989 */,
+/* 990 */,
+/* 991 */,
+/* 992 */,
+/* 993 */,
+/* 994 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Alert = function (_React$Component) {
+	_inherits(Alert, _React$Component);
+
+	function Alert(props) {
+		_classCallCheck(this, Alert);
+
+		return _possibleConstructorReturn(this, (Alert.__proto__ || Object.getPrototypeOf(Alert)).call(this, props));
+	}
+
+	_createClass(Alert, [{
+		key: "render",
+		value: function render() {
+			return _react2.default.createElement(
+				"div",
+				{ className: "ui message" },
+				_react2.default.createElement("i", { className: "close icon", onClick: this.props.dismissAlert }),
+				_react2.default.createElement(
+					"p",
+					null,
+					"The list was updated and saved."
+				)
+			);
+		}
+	}]);
+
+	return Alert;
+}(_react2.default.Component);
+
+exports.default = Alert;
 
 /***/ })
 /******/ ]);

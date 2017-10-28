@@ -4,37 +4,50 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha spec",
+    "test": "NODE_ENV=test && jest",
     "compile": "webpack --watch",
     "server-dev": "nodemon server/index.js",
     "server-inspect": "node --inspect server/index.js",
     "start": "node server.js"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/__tests__/setup.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-react-html-attrs": "^2.0.0",
     "babel-plugin-transform-decorators": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1"
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "enzyme": "^3.1.0",
+    "enzyme-to-json": "^3.1.4"
   },
   "dependencies": {
     "axios": "^0.17.0",
     "babel-core": "^6.26.0",
+    "babel-jest": "^21.2.0",
     "babel-loader": "^7.1.2",
     "better-console": "^1.0.1",
     "browserify": "^14.5.0",
+    "chai": "^4.1.2",
+    "enzyme-adapter-react-16": "^1.0.2",
     "express": "^4.16.2",
     "immutability-helper": "^2.4.0",
+    "jest": "^21.2.1",
+    "mocha": "^4.0.1",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.3",
     "react-dnd": "^2.5.4",
     "react-dnd-html5-backend": "^2.5.4",
     "react-dom": "^16.0.0",
+    "react-test-renderer": "^16.0.0",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^2.2.0",
     "semantic-ui": "^2.2.13",
     "semantic-ui-react": "^0.75.1",
+    "sinon": "^4.0.2",
     "webpack": "^3.8.1"
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import reactDOM from 'react-dom';
 
-class SaveButton extends React.Component {
+class DisabledSaveButton extends React.Component {
   constructor(props){
     super(props)
     this.state = {
@@ -9,16 +9,14 @@ class SaveButton extends React.Component {
     }
   }
   
-
   render(){
     return(
-      <button class="ui active button" onClick={this.props.saveCards}>
+      <button class="ui disabled button">
         <i class="checkmark icon"></i>
           Save
       </button>
     ) 
   }
-
 }
 
-export default SaveButton;
+export default DisabledSaveButton;

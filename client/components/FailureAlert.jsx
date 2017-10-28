@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Alert extends React.Component {
+class FailureAlert extends React.Component {
 	constructor(props){
 		super(props)
 	}
@@ -8,10 +8,10 @@ class Alert extends React.Component {
 		return(
 			<div class="ui message">
 				<i class="close icon" onClick={this.props.dismissAlert}></i>
-				<p>The list was updated and saved.</p>
+				<p>Sorry, something went wrong. Please try again.</p>
 			</div>
 		)
 	}
 }
 
-export default Alert
+export default FailureAlert

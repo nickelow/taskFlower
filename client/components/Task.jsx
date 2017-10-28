@@ -12,7 +12,8 @@ const style = {
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
   backgroundColor: 'white',
-  cursor: 'move'
+  cursor: 'move',
+  'fontFamily': 'Helvetica, Arial, sans-serif'
 };
 
 const cardSource = {
@@ -68,31 +69,32 @@ function collect2(connect, monitor) {
 class Card extends React.Component {
   render() {
 
-    const { text, id, isDragging, connectDragSource, connectDropTarget, editMode, deleteCard } = this.props;
+    const { text, id, isDragging, connectDragSource, connectDropTarget, editMode, deleteCard, editCard } = this.props;
     const opacity = isDragging ? 0 : 1;
 
     return connectDragSource(connectDropTarget(
       <div>
         <Form>
-          <DeleteButton deleteCard={deleteCard} id={id}/>
-          <TextArea autoHeight placeholder={text} text={text} id={id} style={{ minHeight: 100 }} onClick={editMode} />
+          <DeleteButton deleteCard={deleteCard} id={text} text={text}/>
+          <TextArea autoHeight placeholder={text} text={text} id={id} style={{ minHeight: 100 }}  onKeyUp={editCard}/>
         </Form>
       </div>
     ));
   }
 }
 
-Card.propTypes = {
-  connectDragSource: PropTypes.func.isRequired,
-  connectDropTarget: PropTypes.func.isRequired,
-  isDragging: PropTypes.bool.isRequired,
-  id: PropTypes.any.isRequired,
-  text: PropTypes.string.isRequired,
-  moveCard: PropTypes.func.isRequired,
-  findCard: PropTypes.func.isRequired,
-  editMode: PropTypes.func.isRequired,
-  deleteCard: PropTypes.func.isRequired
-};
+// Card.propTypes = {
+//   connectDragSource: PropTypes.func.isRequired,
+//   connectDropTarget: PropTypes.func.isRequired,
+//   isDragging: PropTypes.bool.isRequired,
+//   id: PropTypes.any.isRequired,
+//   text: PropTypes.string.isRequired,
+//   moveCard: PropTypes.func.isRequired,
+//   findCard: PropTypes.func.isRequired,
+//   editMode: PropTypes.func.isRequired,
+//   deleteCard: PropTypes.func.isRequired,
+//   editCard: PropTypes.func.isRequired
+// };
 
 const x = DropTarget(ItemTypes.CARD, cardTarget, collect )(Card)
 export default DragSource(ItemTypes.CARD, cardSource, collect2 )( x )
