@@ -41,7 +41,7 @@ class List extends React.Component {
     this.state = {
       cards: [],
       modified: false,
-      saved: null,
+      saved: false,
       target: null,
       ids: 0
     };
@@ -72,7 +72,9 @@ class List extends React.Component {
 				},
 			}),
 		)
-		this.forceUpdate()
+		this.setState({
+      modified: true
+    })
 	}
 
 	saveCards(){
@@ -168,6 +170,7 @@ class List extends React.Component {
     	<div style={listStyle}>
     	<div><ButtonBar addCard={this.addCard} modified={this.state.modified} saveCards={this.saveCards}/></div>
       <div style={cardStyle}>
+      {this.state.saved === true ? <Alert dismissAlert={this.dismissAlert}/> : <div></div>}
         {cards.map((card, i) => {
           return (
             <Card key={i}

@@ -1,5 +1,7 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme';
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 import Home from '../client/components/Home.jsx'
 import List from '../client/components/List.jsx'
 import Card from '../client/components/Task.jsx'
@@ -36,17 +38,6 @@ describe('<List />', () => {
   });
 });
 
-describe('<Card />', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(<Card />);
-  });
-
-  it('should render', () => {
-    expect(toJson(wrapper)).toMatchSnapshot();
-  });
-});
 
 describe('<TaskButton/>', () => {
   let wrapper;
@@ -60,29 +51,21 @@ describe('<TaskButton/>', () => {
   it('should render', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
   });
-
-  it('should add a task when clicked', () => {
-    wrapper.find('.ui right labeled icon button').simulate('click');
-    expect(spy.calledOnce).to.be.true;
-  })
 });
 
 describe('<DeleteButton/>', () => {
   let wrapper;
-
+  let  component;
   beforeEach(() => {
   	const spy = sinon.spy();
     wrapper = shallow(<DeleteButton deleteCard={spy}/>);
+    component = wrapper.instance()
   });
 
   it('should render', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
-  it('should delete a task when clicked', () => {
-    wrapper.find('.fa fa-trash').simulate('click');
-    expect(spy.calledOnce).to.be.true;
-  })
 });
 
 describe('<SaveButton/>', () => {
@@ -97,10 +80,6 @@ describe('<SaveButton/>', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
-  it('should save the tasks when clicked', () => {
-    wrapper.find('.ui active button').simulate('click');
-    expect(spy.calledOnce).to.be.true;
-  })
 });
 
 describe('<ButtonBar/>', () => {

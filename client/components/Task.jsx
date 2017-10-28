@@ -83,18 +83,5 @@ class Card extends React.Component {
   }
 }
 
-// Card.propTypes = {
-//   connectDragSource: PropTypes.func.isRequired,
-//   connectDropTarget: PropTypes.func.isRequired,
-//   isDragging: PropTypes.bool.isRequired,
-//   id: PropTypes.any.isRequired,
-//   text: PropTypes.string.isRequired,
-//   moveCard: PropTypes.func.isRequired,
-//   findCard: PropTypes.func.isRequired,
-//   editMode: PropTypes.func.isRequired,
-//   deleteCard: PropTypes.func.isRequired,
-//   editCard: PropTypes.func.isRequired
-// };
-
 const x = DropTarget(ItemTypes.CARD, cardTarget, collect )(Card)
 export default DragSource(ItemTypes.CARD, cardSource, collect2 )( x )

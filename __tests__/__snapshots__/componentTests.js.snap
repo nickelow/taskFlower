@@ -3,6 +3,12 @@
 exports[`<Alert /> should render 1`] = `
 <div
   className="ui message"
+  stlye={
+    Object {
+      "backgroundColor": "YellowGreen",
+      "width": "400px",
+    }
+  }
 >
   <i
     className="close icon"
@@ -25,8 +31,6 @@ Array [
   />,
 ]
 `;
-
-exports[`<Card /> should render 1`] = `undefined`;
 
 exports[`<DeleteButton/> should render 1`] = `
 <i

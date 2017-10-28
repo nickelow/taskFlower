@@ -48780,16 +48780,6 @@ var wellStyles = { maxWidth: 400, margin: '0 auto 10px' };
 var listStyles = { "font-family": "Helvetica, Arial, sans-serif", "font-size": "13px", "color": "rgb(51, 51, 51)" };
 var headerStyles = { 'position': 'relative', 'left': '10%', 'top': '20%', 'width': '40%' };
 var serverPath = 'http://cfassignment.herokuapp.com/matthewnicolaou/tasks';
-var closePath = 'https://app.close.io/hackwithus/';
-
-var closeApp = {
-  first_name: 'Matthew',
-  last_name: 'Nicolaou',
-  email: 'matthewpnicolaou@gmail.com',
-  phone: '925-876-3379',
-  cover_letter: 'http://bit.ly/2yFTvMj',
-  urls: ['http://bit.ly/2yL8DHf', 'https://github.com/nickelow', 'https://musetrap-trektracker.herokuapp.com/']
-};
 
 var Home = function (_React$Component) {
   _inherits(Home, _React$Component);
@@ -61199,7 +61189,7 @@ var List = function (_React$Component) {
     _this.state = {
       cards: [],
       modified: false,
-      saved: null,
+      saved: false,
       target: null,
       ids: 0
     };
@@ -61237,7 +61227,9 @@ var List = function (_React$Component) {
           $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]]
         }
       }));
-      this.forceUpdate();
+      this.setState({
+        modified: true
+      });
     }
   }, {
     key: 'saveCards',
@@ -61343,6 +61335,7 @@ var List = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { style: cardStyle },
+          this.state.saved === true ? _react2.default.createElement(_Alert2.default, { dismissAlert: this.dismissAlert }) : _react2.default.createElement('div', null),
           cards.map(function (card, i) {
             return _react2.default.createElement(_Task2.default, { key: i,
               index: i,
@@ -61514,19 +61507,6 @@ var Card = function (_React$Component) {
 
   return Card;
 }(_react2.default.Component);
-
-// Card.propTypes = {
-//   connectDragSource: PropTypes.func.isRequired,
-//   connectDropTarget: PropTypes.func.isRequired,
-//   isDragging: PropTypes.bool.isRequired,
-//   id: PropTypes.any.isRequired,
-//   text: PropTypes.string.isRequired,
-//   moveCard: PropTypes.func.isRequired,
-//   findCard: PropTypes.func.isRequired,
-//   editMode: PropTypes.func.isRequired,
-//   deleteCard: PropTypes.func.isRequired,
-//   editCard: PropTypes.func.isRequired
-// };
 
 var x = (0, _reactDnd.DropTarget)(_ItemTypes2.default.CARD, cardTarget, collect)(Card);
 exports.default = (0, _reactDnd.DragSource)(_ItemTypes2.default.CARD, cardSource, collect2)(x);
@@ -85222,6 +85202,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var styles = { width: '400px', backgroundColor: 'YellowGreen' };
+
 var Alert = function (_React$Component) {
 	_inherits(Alert, _React$Component);
 
@@ -85232,16 +85214,16 @@ var Alert = function (_React$Component) {
 	}
 
 	_createClass(Alert, [{
-		key: "render",
+		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
-				"div",
-				{ className: "ui message" },
-				_react2.default.createElement("i", { className: "close icon", onClick: this.props.dismissAlert }),
+				'div',
+				{ className: 'ui message', stlye: styles },
+				_react2.default.createElement('i', { className: 'close icon', onClick: this.props.dismissAlert }),
 				_react2.default.createElement(
-					"p",
+					'p',
 					null,
-					"The list was updated and saved."
+					'The list was updated and saved.'
 				)
 			);
 		}

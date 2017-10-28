@@ -1,4 +1,6 @@
 import React from 'react';
+const styles = {width: '400px', backgroundColor: 'YellowGreen'}
+
 
 class Alert extends React.Component {
 	constructor(props){
@@ -6,7 +8,7 @@ class Alert extends React.Component {
 	}
 	render(){
 		return(
-			<div class="ui message">
+			<div class="ui message" stlye={styles}>
 				<i class="close icon" onClick={this.props.dismissAlert}></i>
 				<p>The list was updated and saved.</p>
 			</div>

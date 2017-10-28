@@ -43,11 +43,13 @@
     "react-dnd-html5-backend": "^2.5.4",
     "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
+    "request": "^2.83.0",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^2.2.0",
     "semantic-ui": "^2.2.13",
     "semantic-ui-react": "^0.75.1",
     "sinon": "^4.0.2",
+    "supertest": "^3.0.0",
     "webpack": "^3.8.1"
   }
 }
